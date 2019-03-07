@@ -37,12 +37,11 @@
     /**======================================================================================================= */
 
     let startTime = null;
-    /**let respondJSON = null; << this is not being called even though it is being referenced */
     let isNew = true;
     let item_selected = false;
 
-    let mobile_stock_api = "https://www.supremenewyork.com/mobile_stock.json"; /**stock api endpoint */
-    let event = document.createEvent('Event'); /**custom event here to be called to mimic an event change*/
+    let mobile_stock_api = "https://www.supremenewyork.com/mobile_stock.json";
+    let event = document.createEvent('Event');
     event.initEvent('change', true, true); 
 
     let notifyHeader = document.createElement('p');
@@ -79,22 +78,6 @@
     };
 
     async function mobileAPIRefreshed(respond) {
-        /** commenting these sets of ifs out because there is no new category anyway
-        if (respond['products_and_categories'] == null || respond['products_and_categories']['new'] == null) {
-            //this check is usesless because if new stock is null then returns false
-            return false;
-        };
-        
-        let newProducts = respond['products_and_categories']['new'];
-        for (let index = 0; index < newProducts.length; index ++) {
-            let item =newProducts[index];
-            if (item != null && item['name'] != null && matchKeyWord(item['name'], keyWord)) {
-                isNew = true;
-                return true;
-            }
-        }
-        */
-
         let categoryProduct = respond['products_and_categories'][category];
         console.log(categoryProduct);
         if (categoryProduct) {
@@ -127,7 +110,6 @@
                 start();
                 return;
             } else {
-                /**calls monitor again if refreshed is false */
                 console.log("Not refreshed, retrying ...");
                 await sleep(1000);
                 await monitor();
@@ -209,7 +191,6 @@
                 setTimeout(function(){ waitTillCartUpdates(); }, 150);
                 return;
             } else {
-                /**Click checkout button */ 
                 notifyHeader.innerHTML = "已经加入购物车";
                 checkout();
                 return;
@@ -376,3 +357,4 @@
 
     monitor();
 })();
+completeion();
