@@ -1,18 +1,20 @@
-//屠龙0.0.2  版权归 “潮目 - Hypeeyes”所有，未经授权不得转发
-//Follow @Hypeeyes on twitter to get the latest update
+/**屠龙0.0.2  版权归 “潮目 - Hypeeyes”所有，未经授权不得转发 */
+/**Follow @Hypeeyes on twitter to get the latest update 
+ * Peer code review by @navar_jande on twitter
+*/
 
 (function () {
-    let keyWord = '+box,+logo';  // +box,+logo,-bear
-    let categories = ["Jackets", "Coats", "Shirts", "Tops/Sweaters", "Sweatshirts", "Pants", "Shorts", "T-Shirts", "Hats", "Bags", "Accessories", "Shoes", "Skate"]
-    // 0 -> "Jackets", 1 -> "Coats", 2-> "Shirts", 3 -> "Tops/Sweaters", 4 ->"Sweatshirts", 5->"Pants", 6->"Shorts", 7->"T-Shirts",
-    //8-> "Hats", 9->"Bags", 10->"Accessories", 11->"Shoes", 12->"Skate"
-    let category = categories[4];
-    let preferredSize = 'mediu'  // 尺码没有了会选择默认尺码
-    let preferColor = 'any'; // 颜色没有了回选最后一个有货的，填any回选第一个颜色有货的
-    let autoCheckout = false; // 自动结账， 
-    let checkout_delay = 2500; // 结账延迟设置， 2500 = 2.5秒
+    let keyWord = '+pendant';  /** +box,+logo,-bear*/
+    let categories = ["Jackets", "Coats", "Shirts", "Tops/Sweaters", "Sweatshirts", "Pants", "Shorts", "T-Shirts", "Hats", "Bags", "Accessories", "Shoes", "Skate"];
+    /** 0 -> "Jackets", 1 -> "Coats", 2-> "Shirts", 3 -> "Tops/Sweaters", 4 ->"Sweatshirts", 5->"Pants", 6->"Shorts", 7->"T-Shirts",
+        8-> "Hats", 9->"Bags", 10->"Accessories", 11->"Shoes", 12->"Skate" */
+    let category = categories[10];
+    let preferredSize = 'medium';  /**尺码没有了会选择默认尺码 */
+    let preferColor = 'any'; /**颜色没有了回选最后一个有货的，填any回选第一个颜色有货的 */
+    let autoCheckout = false; /**自动结账， */
+    let checkout_delay = 2500; /**结账延迟设置， 2500 = 2.5秒 */ 
 
-    //Address info
+    /**Address info */
     let billing_name = "us last";
     let order_email = "test@gmail.com";
     let order_tel = "1112223344";
@@ -20,27 +22,27 @@
     let order_billing_address_2 = "Apt48";
     let order_billing_zip = "95116";
     let order_billing_city = "San Jose";
-    let order_billing_state = "CA";  // 日本省份前面要加空格，
-    let order_billing_country = "USA"; // USA, CANADA，EU:GB, FR  欧洲国家大写缩写
+    let order_billing_state = "CA";  /**日本省份前面要加空格， */
+    let order_billing_country = "USA"; /**USA, CANADA，EU:GB, FR  欧洲国家大写缩写 */ 
 
-    //Payment info
-    let credit_card_type = "cod"; // 日本代金填cod
-    // 欧洲：visa, american_express, master, solo 
-    // 日本：visa, american_express, master, jcb, cod(代金)
+    /**Payment info */
+    let credit_card_type = "visa"; /**日本代金填cod */
+    /**欧洲：visa, american_express, master, solo  */ 
+    /**日本：visa, american_express, master, jcb, cod(代金) */
     let cnb = "4111 1111 1111 1111";
     let month = "10";
     let year = "2022";
     let vval = "119";
 
-    //=======================================================================================================
+    /**======================================================================================================= */
 
     let startTime = null;
-    let respondJSON = null;
+    /**let respondJSON = null; << this is not being called even though it is being referenced */
     let isNew = true;
     let item_selected = false;
 
-    let mobile_stock_api = "https://www.supremenewyork.com/mobile_stock.json";
-    let event = document.createEvent('Event');
+    let mobile_stock_api = "https://www.supremenewyork.com/mobile_stock.json"; /**stock api endpoint */
+    let event = document.createEvent('Event'); /**custom event here to be called to mimic an event change*/
     event.initEvent('change', true, true); 
 
     let notifyHeader = document.createElement('p');
@@ -77,9 +79,12 @@
     };
 
     async function mobileAPIRefreshed(respond) {
+        /** commenting these sets of ifs out because there is no new category anyway
         if (respond['products_and_categories'] == null || respond['products_and_categories']['new'] == null) {
+            //this check is usesless because if new stock is null then returns false
             return false;
-        }
+        };
+        
         let newProducts = respond['products_and_categories']['new'];
         for (let index = 0; index < newProducts.length; index ++) {
             let item =newProducts[index];
@@ -88,17 +93,19 @@
                 return true;
             }
         }
+        */
 
         let categoryProduct = respond['products_and_categories'][category];
-        if (categoryProduct != undefined) {
+        console.log(categoryProduct);
+        if (categoryProduct) {
             for (let index = 0; index < categoryProduct.length; index ++) {
-                let item =categoryProduct[index];
+                let item = categoryProduct[index];
                 if (item != null && item['name'] != null && matchKeyWord(item['name'], keyWord)) {
                     isNew = false;
                     return true;
-                }
-            }
-        }
+                };
+            };
+        };
         return false;
     }
 
@@ -114,13 +121,14 @@
                 respondJSON = respond;
                 startTime = new Date();
                 console.log("Detect Page refreshed with mobile endpoint at: " + startTime.toISOString());
-                notifyHeader.innerHTML = "新商品已经上线。。。如果页面没有跳转到商品页面请手动刷新并且重启程序。"
-                window.location.href = isNew? 'https://www.supremenewyork.com/mobile/#categories/new' : ('https://www.supremenewyork.com/mobile/#categories/' + category);
+                notifyHeader.innerHTML = "新商品已经上线。。。如果页面没有跳转到商品页面请手动刷新并且重启程序。";
+                window.location.href = isNew ? 'https://www.supremenewyork.com/mobile/#categories/new' : `https://www.supremenewyork.com/mobile/#categories/${category}`;
                 await sleep(300);
                 start();
                 return;
             } else {
-                console.log("Not refreshed, retrying ...")
+                /**calls monitor again if refreshed is false */
+                console.log("Not refreshed, retrying ...");
                 await sleep(1000);
                 await monitor();
                 return;
@@ -143,8 +151,8 @@
                     selectedItem =item;
                     selectedItem.click();
                     break;
-                }
-            }
+                };
+            };
 
             if (selectedItem !== null) {
                 (function waitTillItemClick() {
@@ -159,22 +167,22 @@
                 })();
             } else {
                 sleep(50).then(start);
-            }
+            };
         } else {
             sleep(150).then(start);
-        }
-    }
+        };
+    };
 
-    (function waitTillArticlePageIsOpen() {
+    ( function waitTillArticlePageIsOpen(){
         console.log('wait item page ...');
         let atcBtn = document.getElementsByClassName("cart-button")[0];
         if (atcBtn) {
             addToCart();
         } else {
             setTimeout(function(){ waitTillArticlePageIsOpen(); }, 150);
-        }
+        };
         return;
-    })();
+    } )();
 
 
 
@@ -201,9 +209,9 @@
                 setTimeout(function(){ waitTillCartUpdates(); }, 150);
                 return;
             } else {
-                // Click checkout button
+                /**Click checkout button */ 
                 notifyHeader.innerHTML = "已经加入购物车";
-                checkout()
+                checkout();
                 return;
             }
         })();
@@ -243,7 +251,7 @@
 
     function chooseSize(){
         let sizeOpts = document.getElementsByTagName("option");
-        let sizeVal = sizeOpts[0].value
+        let sizeVal = sizeOpts[0].value;
         for (let option of sizeOpts){
             let size = option.text.toLowerCase();
             if (size === preferredSize.toLowerCase() || size === 'N/A'){
@@ -366,7 +374,5 @@
         }
     }
 
-    monitor()
-})()
-
-completion()
+    monitor();
+})();
